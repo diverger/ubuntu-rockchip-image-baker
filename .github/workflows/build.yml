@@ -27,8 +27,17 @@ jobs:
             # Add other boards as needed
 
     steps:
-      - name: Build u-boot
-        uses: diverger/ubuntu-rockchip-uboot-baker@joshua
+      - name: Checkout scripts
+        uses: actions/checkout@v4
+        with:
+          repository: diverger/ubuntu-rockchip-uboot-baker
+          ref: main
+          token: ${{ REPO_ACCESS_TOKEN }}
+          path: ./.github/actions/
+
+      - name: Build
+        uses: ./.github/actions/.githug/workflows/build.yml
         with:
           board: ${{ matrix.board }}
+
 
