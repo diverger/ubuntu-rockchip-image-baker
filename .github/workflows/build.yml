@@ -1,0 +1,34 @@
+name: Build All Images with Bakers
+# This workflow triggers the rootfs, kernel, and u-boot builds in external baker repositories
+# based on supported suites, flavors and boards, downloads the artifacts, and then builds the final images.
+
+run-name: Build with ubuntu-rockchip-rootfs-baker
+
+on:
+  workflow_dispatch
+
+env:
+  KERNEL_BUILD_DIR: "build/kernel"
+  U-BOOT_BUILD_DIR: "build/u-boot"
+  ROOTFS_BUILD_DIR: "build/rootfs"
+  ACTION_ACCESS_TOKEN: ${{ secrets.ACTION_ACCESS_TOKEN }}
+  REPO_ACCESS_TOKEN: ${{ secrets.REPO_ACCESS_TOKEN }}
+
+jobs:
+
+  build_uboot:
+    if: ${{ github.repository_owner == 'diverger' }}
+    runs-on: ubuntu-latest
+    name: Build u-boot
+    strategy:
+        matrix:
+          board:
+            - handy-hpd5kx
+            # Add other boards as needed
+
+    steps:
+      - name: Build u-boot
+        uses: diverger/ubuntu-rockchip-uboot-baker@joshua
+        with:
+          board: ${{ matrix.board }}
+
