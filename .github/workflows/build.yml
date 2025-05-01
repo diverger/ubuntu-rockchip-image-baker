@@ -31,12 +31,12 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: diverger/ubuntu-rockchip-uboot-baker
-          ref: main
           token: ${{ env.REPO_ACCESS_TOKEN }}
-          path: ./.github/actions/
+          path: ./.github/actions
+          fetch-depth: 1
 
       - name: Build
-        uses: ./.github/actions/.githug/workflows/build.yml
+        uses: ./.github/actions/.github/workflows/build.yml
         with:
           board: ${{ matrix.board }}
 
