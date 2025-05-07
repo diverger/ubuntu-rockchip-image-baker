@@ -4,7 +4,7 @@ run-name: >
   ${{ github.event.inputs.suite }}
   ${{ github.event.inputs.flavor }}
   by @${{ github.actor }} with ${{ github.event.inputs.trigger_source }}
-  (image retention: ${{ github.event.inputs.image_artifact_retention_days }})
+  (image retention: ${{ github.event.inputs.image_artifact_retention_days }} d)
 
 on:
   workflow_dispatch:
