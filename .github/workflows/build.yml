@@ -13,29 +13,39 @@ on:
         description: 'Target board (e.g., handy-hpd5kx, rock-5b)'
         required: true
         type: string
+        default: handy-hpd5kx
+
       suite:
         description: 'Ubuntu suite (e.g., noble, jammy)'
         required: true
-        type: string
+        type: choice
+        default: noble
+        options:
+          - noble
+          - jammy
+          # Add other supported suites as needed
+
       flavor:
         description: 'Ubuntu flavor (e.g., desktop, server)'
         required: true
-        type: string
+        type: choice
+        default: desktop
+        options:
+          - desktop
+          - server
+          # Add other supported flavors as needed
+
       baker_artifact_retention_days:
         description: 'Retention days for baker artifacts'
         required: false
-        default: '1'
-        type: string
-      trigger_source:
-        description: "Source of the trigger (e.g., manual, workflow)"
-        required: false
-        type: string
-        default: "manual"
+        type: number
+        default: 1
+
       image_artifact_retention_days:
         description: 'Retention days for artifacts downloaded from bakers and the final image'
         required: false
-        default: 90
         type: number
+        default: 90
 
 env:
   RECIPE_REPO: "diverger/ubuntu-rockchip"
