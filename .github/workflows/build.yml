@@ -3,6 +3,7 @@ run-name: >
   Build ${{ github.event.inputs.board }}
   ${{ github.event.inputs.suite }}
   ${{ github.event.inputs.flavor }}
+  by @${{ github.actor }} with ${{ github.event.inputs.trigger_source }}
   (image retention: ${{ github.event.inputs.image_artifact_retention_days }})
 
 on:
@@ -33,6 +34,12 @@ on:
           - desktop
           - server
           # Add other supported flavors as needed
+
+      trigger_source:
+        description: "Source of the trigger (e.g., manual, workflow)"
+        required: false
+        type: string
+        default: "manual"
 
       baker_artifact_retention_days:
         description: 'Retention days for baker artifacts'
