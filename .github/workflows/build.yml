@@ -112,7 +112,6 @@ jobs:
           board: ${{ github.event.inputs.board }}
           suite: ${{ github.event.inputs.suite }}
           flavor: ${{ github.event.inputs.flavor }}
-          trigger_source: ${{ github.event.inputs.trigger_source }}
           baker_artifact_retention_days: ${{ github.event.inputs.baker_artifact_retention_days }}
           image_artifact_retention_days: ${{ github.event.inputs.image_artifact_retention_days }}
 
