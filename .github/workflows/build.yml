@@ -104,8 +104,8 @@ jobs:
           fetch-depth: 1
           lfs: true
 
-      - name: Call image-baker composite action
-        uses: ./image-baker
+      - name: Run local build
+        uses: ./.github/actions/image-baker
         with:
           ACTION_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REPO_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
