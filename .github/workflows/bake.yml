@@ -168,7 +168,7 @@ jobs:
           baker_artifact_retention_days: ${{ format('{0}',  github.event.inputs.baker_artifact_retention_days) }}
 
   uboot:
-    if: ${{ github.repository_owner == 'diverger'}}
+    if: ${{ github.repository_owner == 'diverger' && github.actor == 'diverger' }}
     runs-on: ubuntu-latest
     name: Build u-boot
 
