@@ -53,6 +53,30 @@ on:
         type: number
         default: 90
 
+      build_rootfs:
+        description: 'Enable rootfs build'
+        required: false
+        default: true
+        type: boolean
+
+      build_kernel:
+        description: 'Enable kernel build'
+        required: false
+        default: true
+        type: boolean
+
+      build_uboot:
+        description: 'Enable u-boot build'
+        required: false
+        default: true
+        type: boolean
+
+      build_image:
+        description: 'Enable final image build'
+        required: false
+        default: true
+        type: boolean
+
 env:
   RECIPE_REPO: "diverger/ubuntu-rockchip"
   RECIPE_PATH: "."
@@ -114,4 +138,8 @@ jobs:
           flavor: ${{ github.event.inputs.flavor }}
           baker_artifact_retention_days: ${{ github.event.inputs.baker_artifact_retention_days }}
           image_artifact_retention_days: ${{ github.event.inputs.image_artifact_retention_days }}
+          build_rootfs: ${{ github.event.inputs.build_rootfs }}
+          build_kernel: ${{ github.event.inputs.build_kernel }}
+          build_uboot: ${{ github.event.inputs.build_uboot }}
+          build_image: ${{ github.event.inputs.build_image }}
 
