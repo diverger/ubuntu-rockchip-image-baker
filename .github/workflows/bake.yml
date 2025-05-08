@@ -214,14 +214,6 @@ jobs:
         run: |
           echo "Workflow triggered by: ${{ github.event.inputs.trigger_source }}"
 
-      - name: Calculate expire date
-        id: expire
-        run: |
-          expire_date=$(date -u -d "+${{ github.event.inputs.image_artifact_retention_days }} days" +"%Y-%m-%d")
-          echo "Expire date: $expire_date"
-          echo "expire_date=$expire_date" >> $GITHUB_OUTPUT
-          echo "### Artifact Expire Date: $expire_date" >> $GITHUB_STEP_SUMMARY
-
       - name: Get more disk space
         uses: jlumbroso/free-disk-space@main
         with:
@@ -243,6 +235,7 @@ jobs:
           lfs: true
 
       - name: Run local build
+        id: image_build_step
         uses: ./.github/actions/image-baker
         with:
           action_access_token: ${{ secrets.ACTION_ACCESS_TOKEN }}
@@ -251,3 +244,12 @@ jobs:
           suite: ${{ github.event.inputs.suite }}
           flavor: ${{ github.event.inputs.flavor }}
           image_artifact_retention_days: ${{ github.event.inputs.image_artifact_retention_days }}
+
+      - name: Calculate expire date
+        if: ${{ success() && steps.image_build_step.outcome == 'success' }}
+        id: expire
+        run: |
+          expire_date=$(date -u -d "+${{ github.event.inputs.image_artifact_retention_days }} days" +"%Y-%m-%d")
+          echo "Expire date: $expire_date"
+          echo "expire_date=$expire_date" >> $GITHUB_OUTPUT
+          echo "### Artifact Expire Date: $expire_date" >> $GITHUB_STEP_SUMMARY
