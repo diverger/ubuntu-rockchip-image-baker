@@ -85,7 +85,7 @@ jobs:
   rootfs:
     if: ${{ github.repository_owner == 'diverger' && github.actor == 'diverger' }}
     runs-on: ubuntu-latest
-    name: Build Ubuntu Rockchip Image
+    name: Build rootfs
 
     steps:
       - name: Show trigger source
