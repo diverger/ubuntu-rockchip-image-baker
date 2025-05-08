@@ -1,0 +1,145 @@
+name: Bake Ubuntu Rockchip Image
+run-name: >
+  Build ${{ github.event.inputs.board }}
+  ${{ github.event.inputs.suite }}
+  ${{ github.event.inputs.flavor }}
+  by @${{ github.actor }} with ${{ github.event.inputs.trigger_source }}
+  (image retention: ${{ github.event.inputs.image_artifact_retention_days }} d)
+
+on:
+  workflow_dispatch:
+    inputs:
+      board:
+        description: 'Target board (e.g., handy-hpd5kx, rock-5b)'
+        required: true
+        type: string
+        default: handy-hpd5kx
+
+      suite:
+        description: 'Ubuntu suite (e.g., noble, jammy)'
+        required: true
+        type: choice
+        default: noble
+        options:
+          - noble
+          - jammy
+          # Add other supported suites as needed
+
+      flavor:
+        description: 'Ubuntu flavor (e.g., desktop, server)'
+        required: true
+        type: choice
+        default: desktop
+        options:
+          - desktop
+          - server
+          # Add other supported flavors as needed
+
+      trigger_source:
+        description: "Source of the trigger (e.g., manual, workflow)"
+        required: false
+        type: string
+        default: "manual"
+
+      baker_artifact_retention_days:
+        description: 'Retention days for baker artifacts'
+        required: false
+        type: number
+        default: 1
+
+      image_artifact_retention_days:
+        description: 'Retention days for artifacts downloaded from bakers and the final image'
+        required: false
+        type: number
+        default: 90
+
+      build_rootfs:
+        description: 'Enable rootfs build'
+        required: false
+        default: true
+        type: boolean
+
+      build_kernel:
+        description: 'Enable kernel build'
+        required: false
+        default: true
+        type: boolean
+
+      build_uboot:
+        description: 'Enable u-boot build'
+        required: false
+        default: true
+        type: boolean
+
+      build_image:
+        description: 'Enable final image build'
+        required: false
+        default: true
+        type: boolean
+
+env:
+  RECIPE_REPO: "diverger/ubuntu-rockchip"
+  RECIPE_PATH: "."
+
+jobs:
+  build:
+    if: ${{ github.repository_owner == 'diverger' && github.actor == 'diverger' }}
+    runs-on: ubuntu-latest
+    name: Build Ubuntu Rockchip Image
+
+    steps:
+      - name: Show trigger source
+        run: |
+          echo "Workflow triggered by: ${{ github.event.inputs.trigger_source }}"
+
+      - name: Calculate expire date
+        id: expire
+        run: |
+          expire_date=$(date -u -d "+${{ github.event.inputs.image_artifact_retention_days }} days" +"%Y-%m-%d")
+          echo "Expire date: $expire_date"
+          echo "expire_date=$expire_date" >> $GITHUB_OUTPUT
+          echo "### Artifact Expire Date: $expire_date" >> $GITHUB_STEP_SUMMARY
+
+      # - name: Manual Trigger Step
+      #   if: github.event.inputs.trigger_source == 'manual'
+      #   run: echo "This step runs only for manual triggers."
+
+      # - name: Workflow Trigger Step
+      #   if: github.event.inputs.trigger_source == 'workflow'
+      #   run: echo "This step runs only when triggered by another workflow."
+
+      - name: Get more disk space
+        uses: jlumbroso/free-disk-space@main
+        with:
+          tool-cache: false
+          android: true
+          dotnet: true
+          haskell: true
+          large-packages: true
+          swap-storage: true
+
+      - name: Checkout private repository
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ env.RECIPE_REPO }}
+          token: ${{ secrets.REPO_ACCESS_TOKEN }}
+          path: ${{ env.RECIPE_PATH }}
+          clean: false
+          fetch-depth: 1
+          lfs: true
+
+      - name: Run local build
+        uses: ./.github/actions/image-build
+        with:
+          action_access_token: ${{ secrets.ACTION_ACCESS_TOKEN }}
+          repo_access_token: ${{ secrets.REPO_ACCESS_TOKEN }}
+          board: ${{ github.event.inputs.board }}
+          suite: ${{ github.event.inputs.suite }}
+          flavor: ${{ github.event.inputs.flavor }}
+          baker_artifact_retention_days: ${{ github.event.inputs.baker_artifact_retention_days }}
+          image_artifact_retention_days: ${{ github.event.inputs.image_artifact_retention_days }}
+          build_rootfs: ${{ github.event.inputs.build_rootfs }}
+          build_kernel: ${{ github.event.inputs.build_kernel }}
+          build_uboot: ${{ github.event.inputs.build_uboot }}
+          build_image: ${{ github.event.inputs.build_image }}
+

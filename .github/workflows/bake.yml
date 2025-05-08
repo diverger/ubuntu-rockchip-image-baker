@@ -82,7 +82,130 @@ env:
   RECIPE_PATH: "."
 
 jobs:
-  build:
+  rootfs:
+    if: ${{ github.repository_owner == 'diverger' && github.actor == 'diverger' }}
+    runs-on: ubuntu-latest
+    name: Build Ubuntu Rockchip Image
+
+    steps:
+      - name: Show trigger source
+        run: |
+          echo "Workflow triggered by: ${{ github.event.inputs.trigger_source }}"
+
+      - name: Get more disk space
+        uses: jlumbroso/free-disk-space@main
+        with:
+          tool-cache: false
+          android: true
+          dotnet: true
+          haskell: true
+          large-packages: true
+          swap-storage: true
+
+      - name: Checkout private repository
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ env.RECIPE_REPO }}
+          token: ${{ secrets.REPO_ACCESS_TOKEN }}
+          path: ${{ env.RECIPE_PATH }}
+          clean: false
+          fetch-depth: 1
+          lfs: true
+
+      - name: Run local build
+        uses: ./.github/actions/image-build
+        with:
+          action_access_token: ${{ secrets.ACTION_ACCESS_TOKEN }}
+          repo_access_token: ${{ secrets.REPO_ACCESS_TOKEN }}
+          board: ${{ github.event.inputs.board }}
+          suite: ${{ github.event.inputs.suite }}
+          flavor: ${{ github.event.inputs.flavor }}
+          baker_artifact_retention_days: ${{ github.event.inputs.baker_artifact_retention_days }}
+          image_artifact_retention_days: ${{ github.event.inputs.image_artifact_retention_days }}
+          build_rootfs: ${{ github.event.inputs.build_rootfs }}
+          build_kernel: ${{ github.event.inputs.build_kernel }}
+          build_uboot: ${{ github.event.inputs.build_uboot }}
+          build_image: ${{ github.event.inputs.build_image }}
+
+  kernel:
+    if: ${{ github.repository_owner == 'diverger' && github.actor == 'diverger' }}
+    runs-on: ubuntu-latest
+    name: Build kernel
+
+    steps:
+      - name: Show trigger source
+        run: |
+          echo "Workflow triggered by: ${{ github.event.inputs.trigger_source }}"
+
+
+
+      - name: Get more disk space
+        uses: jlumbroso/free-disk-space@main
+        with:
+          tool-cache: false
+          android: true
+          dotnet: true
+          haskell: true
+          large-packages: true
+          swap-storage: true
+
+      - name: Checkout private repository
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ env.RECIPE_REPO }}
+          token: ${{ secrets.REPO_ACCESS_TOKEN }}
+          path: ${{ env.RECIPE_PATH }}
+          clean: false
+          fetch-depth: 1
+          lfs: true
+
+      - name: Run local build
+        id: baker_step
+        uses: "./.github/actions/kernel-baker"
+        with:
+          repo_access_token: ${{ secrets.REPO_ACCESS_TOKEN }}
+          suite: ${{ github.event.inputs.suite }}
+          baker_artifact_retention_days: ${{ format('{0}',  github.event.inputs.baker_artifact_retention_days) }}
+
+  uboot:
+    if: ${{ github.repository_owner == 'diverger'}}
+    runs-on: ubuntu-latest
+    name: Build u-boot
+
+    steps:
+      - name: Show trigger source
+        run: |
+          echo "Workflow triggered by: ${{ github.event.inputs.trigger_source }}"
+
+      - name: Get more disk space
+        uses: jlumbroso/free-disk-space@main
+        with:
+          tool-cache: false
+          android: true
+          dotnet: true
+          haskell: true
+          large-packages: true
+          swap-storage: true
+
+      - name: Checkout private repository
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ env.RECIPE_REPO }}
+          token: ${{ secrets.REPO_ACCESS_TOKEN }}
+          path: ${{ env.RECIPE_PATH }}
+          clean: false
+          fetch-depth: 1
+          lfs: true
+
+      - name: Run local build
+        id: baker_step
+        uses: "./.github/actions/uboot-baker"
+        with:
+          board: ${{ github.event.inputs.board }}
+          repo_access_token: ${{ secrets.REPO_ACCESS_TOKEN }}
+          baker_artifact_retention_days: ${{ format('{0}',  github.event.inputs.baker_artifact_retention_days) }}
+
+  image:
     if: ${{ github.repository_owner == 'diverger' && github.actor == 'diverger' }}
     runs-on: ubuntu-latest
     name: Build Ubuntu Rockchip Image
@@ -99,14 +222,6 @@ jobs:
           echo "Expire date: $expire_date"
           echo "expire_date=$expire_date" >> $GITHUB_OUTPUT
           echo "### Artifact Expire Date: $expire_date" >> $GITHUB_STEP_SUMMARY
-
-      # - name: Manual Trigger Step
-      #   if: github.event.inputs.trigger_source == 'manual'
-      #   run: echo "This step runs only for manual triggers."
-
-      # - name: Workflow Trigger Step
-      #   if: github.event.inputs.trigger_source == 'workflow'
-      #   run: echo "This step runs only when triggered by another workflow."
 
       - name: Get more disk space
         uses: jlumbroso/free-disk-space@main
@@ -136,10 +251,4 @@ jobs:
           board: ${{ github.event.inputs.board }}
           suite: ${{ github.event.inputs.suite }}
           flavor: ${{ github.event.inputs.flavor }}
-          baker_artifact_retention_days: ${{ github.event.inputs.baker_artifact_retention_days }}
           image_artifact_retention_days: ${{ github.event.inputs.image_artifact_retention_days }}
-          build_rootfs: ${{ github.event.inputs.build_rootfs }}
-          build_kernel: ${{ github.event.inputs.build_kernel }}
-          build_uboot: ${{ github.event.inputs.build_uboot }}
-          build_image: ${{ github.event.inputs.build_image }}
-
