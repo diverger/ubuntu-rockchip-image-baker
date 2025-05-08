@@ -208,6 +208,7 @@ jobs:
   image:
     if: ${{ github.repository_owner == 'diverger' && github.actor == 'diverger' }}
     runs-on: ubuntu-latest
+    needs: [rootfs, kernel, uboot]
     name: Build Ubuntu Rockchip Image
 
     steps:
