@@ -113,19 +113,13 @@ jobs:
           lfs: true
 
       - name: Run local build
-        uses: ./.github/actions/image-baker
+        id: baker_step
+        uses: "./.github/actions/rootfs-baker"
         with:
-          action_access_token: ${{ secrets.ACTION_ACCESS_TOKEN }}
-          repo_access_token: ${{ secrets.REPO_ACCESS_TOKEN }}
-          board: ${{ github.event.inputs.board }}
           suite: ${{ github.event.inputs.suite }}
           flavor: ${{ github.event.inputs.flavor }}
-          baker_artifact_retention_days: ${{ github.event.inputs.baker_artifact_retention_days }}
-          image_artifact_retention_days: ${{ github.event.inputs.image_artifact_retention_days }}
-          build_rootfs: ${{ github.event.inputs.build_rootfs }}
-          build_kernel: ${{ github.event.inputs.build_kernel }}
-          build_uboot: ${{ github.event.inputs.build_uboot }}
-          build_image: ${{ github.event.inputs.build_image }}
+          repo_access_token: ${{ secrets.REPO_ACCESS_TOKEN }}
+          artifact_retention_days: ${{ format('{0}',  github.event.inputs.baker_artifact_retention_days) }}
 
   kernel:
     if: ${{ github.repository_owner == 'diverger' && github.actor == 'diverger' }}
