@@ -113,7 +113,7 @@ jobs:
           lfs: true
 
       - name: Run local build
-        uses: ./.github/actions/image-build
+        uses: ./.github/actions/image-baker
         with:
           action_access_token: ${{ secrets.ACTION_ACCESS_TOKEN }}
           repo_access_token: ${{ secrets.REPO_ACCESS_TOKEN }}
