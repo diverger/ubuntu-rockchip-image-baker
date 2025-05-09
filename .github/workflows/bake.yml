@@ -157,7 +157,7 @@ jobs:
         with:
           repo_access_token: ${{ secrets.REPO_ACCESS_TOKEN }}
           suite: ${{ github.event.inputs.suite }}
-          baker_artifact_retention_days: ${{ format('{0}',  github.event.inputs.baker_artifact_retention_days) }}
+          artifact_retention_days: ${{ format('{0}',  github.event.inputs.baker_artifact_retention_days) }}
 
   uboot:
     if: ${{ github.repository_owner == 'diverger' && github.actor == 'diverger' }}
@@ -195,7 +195,7 @@ jobs:
         with:
           board: ${{ github.event.inputs.board }}
           repo_access_token: ${{ secrets.REPO_ACCESS_TOKEN }}
-          baker_artifact_retention_days: ${{ format('{0}',  github.event.inputs.baker_artifact_retention_days) }}
+          artifact_retention_days: ${{ format('{0}',  github.event.inputs.baker_artifact_retention_days) }}
 
   image:
     if: ${{ github.repository_owner == 'diverger' && github.actor == 'diverger' }}
