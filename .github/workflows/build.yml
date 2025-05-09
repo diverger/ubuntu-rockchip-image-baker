@@ -1,4 +1,4 @@
-name: Build Single Ubuntu Rockchip Image in Streaming
+name: Build Single Image in Streaming
 run-name: >
   Build ${{ github.event.inputs.board }}
   ${{ github.event.inputs.suite }}
