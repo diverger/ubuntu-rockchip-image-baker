@@ -48,6 +48,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Build rootfs
     strategy:
+      fail-fast: false
       matrix:
         flavor:
           - desktop
@@ -96,6 +97,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Build kernel
     strategy:
+      fail-fast: false
       matrix:
         suite:
           - jammy
@@ -140,6 +142,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Build u-boot
     strategy:
+      fail-fast: false
       matrix:
         board:
           - handy-hpd5kx
@@ -186,6 +189,7 @@ jobs:
     needs: [rootfs, kernel, uboot]
     name: Build Ubuntu Rockchip Image
     strategy:
+      fail-fast: false
       matrix:
         board:
           - handy-hpd5kx
