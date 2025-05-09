@@ -1,40 +1,11 @@
 name: Build Ubuntu Rockchip Image in Parallel
 run-name: >
-  Build ${{ github.event.inputs.board }}
-  ${{ github.event.inputs.suite }}
-  ${{ github.event.inputs.flavor }}
-  by @${{ github.actor }} with ${{ github.event.inputs.trigger_source }}
+  Build by @${{ github.actor }} with ${{ github.event.inputs.trigger_source }}
   (image retention: ${{ github.event.inputs.image_artifact_retention_days }} d)
 
 on:
   workflow_dispatch:
     inputs:
-      board:
-        description: 'Target board (e.g., handy-hpd5kx, rock-5b)'
-        required: true
-        type: string
-        default: handy-hpd5kx
-
-      suite:
-        description: 'Ubuntu suite (e.g., noble, jammy)'
-        required: true
-        type: choice
-        default: noble
-        options:
-          - noble
-          - jammy
-          # Add other supported suites as needed
-
-      flavor:
-        description: 'Ubuntu flavor (e.g., desktop, server)'
-        required: true
-        type: choice
-        default: desktop
-        options:
-          - desktop
-          - server
-          # Add other supported flavors as needed
-
       trigger_source:
         description: "Source of the trigger (e.g., manual, workflow)"
         required: false
@@ -52,6 +23,7 @@ on:
         required: false
         type: number
         default: 90
+
 env:
   RECIPE_REPO: "diverger/ubuntu-rockchip"
   RECIPE_PATH: "."
@@ -61,6 +33,14 @@ jobs:
     if: ${{ github.repository_owner == 'diverger' && github.actor == 'diverger' }}
     runs-on: ubuntu-latest
     name: Build rootfs
+    strategy:
+      matrix:
+        flavor:
+          - desktop
+          # - server
+        suite:
+          # - jammy
+          - noble
 
     steps:
       - name: Show trigger source
@@ -91,8 +71,8 @@ jobs:
         id: baker_step
         uses: "./.github/actions/rootfs-baker"
         with:
-          suite: ${{ github.event.inputs.suite }}
-          flavor: ${{ github.event.inputs.flavor }}
+          suite: ${{ matrix.suite }}
+          flavor: ${{ matrix.flavor }}
           repo_access_token: ${{ secrets.REPO_ACCESS_TOKEN }}
           artifact_retention_days: ${{ format('{0}',  github.event.inputs.baker_artifact_retention_days) }}
 
@@ -100,6 +80,11 @@ jobs:
     if: ${{ github.repository_owner == 'diverger' && github.actor == 'diverger' }}
     runs-on: ubuntu-latest
     name: Build kernel
+    strategy:
+      matrix:
+        suite:
+          # - jammy
+          - noble
 
     steps:
       - name: Show trigger source
@@ -131,13 +116,18 @@ jobs:
         uses: "./.github/actions/kernel-baker"
         with:
           repo_access_token: ${{ secrets.REPO_ACCESS_TOKEN }}
-          suite: ${{ github.event.inputs.suite }}
+          suite: ${{ matrix.suite }}
           artifact_retention_days: ${{ format('{0}',  github.event.inputs.baker_artifact_retention_days) }}
 
   uboot:
     if: ${{ github.repository_owner == 'diverger' && github.actor == 'diverger' }}
     runs-on: ubuntu-latest
     name: Build u-boot
+    strategy:
+      matrix:
+        board:
+          - handy-hpd5kx
+          # Add other boards as needed
 
     steps:
       - name: Show trigger source
@@ -168,7 +158,7 @@ jobs:
         id: baker_step
         uses: "./.github/actions/uboot-baker"
         with:
-          board: ${{ github.event.inputs.board }}
+          board: ${{ matrix.board }}
           repo_access_token: ${{ secrets.REPO_ACCESS_TOKEN }}
           artifact_retention_days: ${{ format('{0}',  github.event.inputs.baker_artifact_retention_days) }}
 
@@ -177,6 +167,19 @@ jobs:
     runs-on: ubuntu-latest
     needs: [rootfs, kernel, uboot]
     name: Build Ubuntu Rockchip Image
+    strategy:
+      matrix:
+        board:
+          - handy-hpd5kx
+        flavor:
+          - desktop
+          #- server
+        suite:
+          #- jammy
+          - noble
+        exclude:
+          - board: armsom-sige5
+            suite: jammy
 
     steps:
       - name: Show trigger source
@@ -209,9 +212,9 @@ jobs:
         with:
           action_access_token: ${{ secrets.ACTION_ACCESS_TOKEN }}
           repo_access_token: ${{ secrets.REPO_ACCESS_TOKEN }}
-          board: ${{ github.event.inputs.board }}
-          suite: ${{ github.event.inputs.suite }}
-          flavor: ${{ github.event.inputs.flavor }}
+          board: ${{ matrix.board }}
+          suite: ${{ matrix.suite }}
+          flavor: ${{ matrix.flavor }}
           artifact_retention_days: ${{ github.event.inputs.image_artifact_retention_days }}
 
       - name: Calculate expire date
