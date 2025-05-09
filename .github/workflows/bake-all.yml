@@ -53,7 +53,7 @@ jobs:
           - desktop
           # - server
         suite:
-          # - jammy
+          - jammy
           - noble
 
     steps:
@@ -98,7 +98,7 @@ jobs:
     strategy:
       matrix:
         suite:
-          # - jammy
+          - jammy
           - noble
 
     steps:
