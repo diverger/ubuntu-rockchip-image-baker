@@ -1,4 +1,4 @@
-name: Build Ubuntu Rockchip Image in Parallel
+name: Build Single Ubuntu Rockchip Image in Parallel
 run-name: >
   Build ${{ github.event.inputs.board }}
   ${{ github.event.inputs.suite }}

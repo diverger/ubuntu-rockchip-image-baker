@@ -1,4 +1,4 @@
-name: Build Ubuntu Rockchip Image in Parallel
+name: Build All Ubuntu Rockchip Image in Parallel
 run-name: >
   Build by @${{ github.actor }} with ${{ github.event.inputs.trigger_source }}
   (image retention: ${{ github.event.inputs.image_artifact_retention_days }} d)
