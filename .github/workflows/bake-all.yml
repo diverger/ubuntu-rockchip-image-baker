@@ -143,6 +143,7 @@ jobs:
       matrix:
         board:
           - handy-hpd5kx
+          - orangepi-5-plus
           # Add other boards as needed
 
     steps:
@@ -188,11 +189,12 @@ jobs:
       matrix:
         board:
           - handy-hpd5kx
+          - orangepi-5-plus
         flavor:
           - desktop
           #- server
         suite:
-          #- jammy
+          - jammy
           - noble
         exclude:
           - board: armsom-sige5
