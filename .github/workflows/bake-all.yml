@@ -1,9 +1,20 @@
 name: Build All Image in Parallel
 run-name: >
-  Build by @${{ github.actor }} with ${{ github.event.inputs.trigger_source }}
-  (image retention: ${{ github.event.inputs.image_artifact_retention_days }} d)
+  Build by @${{ github.actor }} with ${{
+    (github.event_name == 'workflow_dispatch' && github.event.inputs.trigger_source) ||
+    (github.event_name == 'repository_dispatch' && github.event.client_payload.trigger_source) ||
+    'manual'
+  }}
+  (image retention: ${{
+    (github.event_name == 'workflow_dispatch' && github.event.inputs.image_artifact_retention_days) ||
+    (github.event_name == 'repository_dispatch' && github.event.client_payload.image_artifact_retention_days) ||
+    90
+  }} d)
 
 on:
+  repository_dispatch:
+    types: [nightly-build-trigger]
+
   workflow_dispatch:
     inputs:
       trigger_source:
@@ -27,6 +38,9 @@ on:
 env:
   RECIPE_REPO: "diverger/ubuntu-rockchip"
   RECIPE_PATH: "."
+  EFFECTIVE_TRIGGER_SOURCE: ${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.trigger_source) || (github.event_name == 'repository_dispatch' && github.event.client_payload.trigger_source) || 'manual' }}
+  EFFECTIVE_BAKER_ARTIFACT_RETENTION_DAYS: ${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.baker_artifact_retention_days) || (github.event_name == 'repository_dispatch' && github.event.client_payload.baker_artifact_retention_days) || 1 }}
+  EFFECTIVE_IMAGE_ARTIFACT_RETENTION_DAYS: ${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.image_artifact_retention_days) || (github.event_name == 'repository_dispatch' && github.event.client_payload.image_artifact_retention_days) || 90 }}
 
 jobs:
   rootfs:
@@ -45,7 +59,8 @@ jobs:
     steps:
       - name: Show trigger source
         run: |
-          echo "Workflow triggered by: ${{ github.event.inputs.trigger_source }}"
+          echo "Workflow triggered by: ${{ env.EFFECTIVE_TRIGGER_SOURCE }}"
+          echo "Event name: ${{ github.event_name }}"
 
       - name: Get more disk space
         uses: jlumbroso/free-disk-space@main
@@ -74,7 +89,7 @@ jobs:
           suite: ${{ matrix.suite }}
           flavor: ${{ matrix.flavor }}
           repo_access_token: ${{ secrets.REPO_ACCESS_TOKEN }}
-          artifact_retention_days: ${{ format('{0}',  github.event.inputs.baker_artifact_retention_days) }}
+          artifact_retention_days: ${{ format('{0}', env.EFFECTIVE_BAKER_ARTIFACT_RETENTION_DAYS) }}
 
   kernel:
     if: ${{ github.repository_owner == 'diverger' && github.actor == 'diverger' }}
@@ -89,7 +104,8 @@ jobs:
     steps:
       - name: Show trigger source
         run: |
-          echo "Workflow triggered by: ${{ github.event.inputs.trigger_source }}"
+          echo "Workflow triggered by: ${{ env.EFFECTIVE_TRIGGER_SOURCE }}"
+          echo "Event name: ${{ github.event_name }}"
 
       - name: Get more disk space
         uses: jlumbroso/free-disk-space@main
@@ -117,7 +133,7 @@ jobs:
         with:
           repo_access_token: ${{ secrets.REPO_ACCESS_TOKEN }}
           suite: ${{ matrix.suite }}
-          artifact_retention_days: ${{ format('{0}',  github.event.inputs.baker_artifact_retention_days) }}
+          artifact_retention_days: ${{ format('{0}', env.EFFECTIVE_BAKER_ARTIFACT_RETENTION_DAYS) }}
 
   uboot:
     if: ${{ github.repository_owner == 'diverger' && github.actor == 'diverger' }}
@@ -132,7 +148,8 @@ jobs:
     steps:
       - name: Show trigger source
         run: |
-          echo "Workflow triggered by: ${{ github.event.inputs.trigger_source }}"
+          echo "Workflow triggered by: ${{ env.EFFECTIVE_TRIGGER_SOURCE }}"
+          echo "Event name: ${{ github.event_name }}"
 
       - name: Get more disk space
         uses: jlumbroso/free-disk-space@main
@@ -160,7 +177,7 @@ jobs:
         with:
           board: ${{ matrix.board }}
           repo_access_token: ${{ secrets.REPO_ACCESS_TOKEN }}
-          artifact_retention_days: ${{ format('{0}',  github.event.inputs.baker_artifact_retention_days) }}
+          artifact_retention_days: ${{ format('{0}', env.EFFECTIVE_BAKER_ARTIFACT_RETENTION_DAYS) }}
 
   image:
     if: ${{ github.repository_owner == 'diverger' && github.actor == 'diverger' }}
@@ -184,7 +201,8 @@ jobs:
     steps:
       - name: Show trigger source
         run: |
-          echo "Workflow triggered by: ${{ github.event.inputs.trigger_source }}"
+          echo "Workflow triggered by: ${{ env.EFFECTIVE_TRIGGER_SOURCE }}"
+          echo "Event name: ${{ github.event_name }}"
 
       - name: Get more disk space
         uses: jlumbroso/free-disk-space@main
@@ -215,13 +233,13 @@ jobs:
           board: ${{ matrix.board }}
           suite: ${{ matrix.suite }}
           flavor: ${{ matrix.flavor }}
-          artifact_retention_days: ${{ github.event.inputs.image_artifact_retention_days }}
+          artifact_retention_days: ${{ env.EFFECTIVE_IMAGE_ARTIFACT_RETENTION_DAYS }}
 
       - name: Calculate expire date
         if: ${{ success() && steps.image_build_step.outcome == 'success' }}
         id: expire
         run: |
-          expire_date=$(date -u -d "+${{ github.event.inputs.image_artifact_retention_days }} days" +"%Y-%m-%d")
+          expire_date=$(date -u -d "+${{ env.EFFECTIVE_IMAGE_ARTIFACT_RETENTION_DAYS }} days" +"%Y-%m-%d")
           echo "Expire date: $expire_date"
           echo "expire_date=$expire_date" >> $GITHUB_OUTPUT
           echo "### Artifact Expire Date: $expire_date" >> $GITHUB_STEP_SUMMARY
