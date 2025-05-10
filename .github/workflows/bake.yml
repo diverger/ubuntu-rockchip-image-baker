@@ -13,8 +13,11 @@ on:
       board:
         description: 'Target board (e.g., handy-hpd5kx, rock-5b)'
         required: true
-        type: string
+        type: choice
         default: handy-hpd5kx
+        options:
+          - handy-hpd5kx
+          - orangepi-5-plus
 
       suite:
         description: 'Ubuntu suite (e.g., noble, jammy)'
@@ -53,6 +56,7 @@ on:
         required: false
         type: number
         default: 90
+
 env:
   RECIPE_REPO: "diverger/ubuntu-rockchip"
   RECIPE_PATH: "."
