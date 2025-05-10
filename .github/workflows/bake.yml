@@ -26,7 +26,7 @@ on:
         default: noble
         options:
           - noble
-          - jammy
+          # - jammy
           # Add other supported suites as needed
 
       flavor:
