@@ -13,7 +13,7 @@ run-name: >
 
 on:
   repository_dispatch:
-    types: [nightly-build-trigger]
+    types: [build-trigger]
 
   workflow_dispatch:
     inputs:
@@ -34,6 +34,18 @@ on:
         required: false
         type: number
         default: 90
+
+      release_id:
+        description: 'Release ID for the image'
+        required: false
+        type: string
+        default: ''
+
+      release_tag:
+        description: 'Release tag for the image'
+        required: false
+        type: string
+        default: ''
 
 env:
   RECIPE_REPO: "diverger/ubuntu-rockchip"
@@ -239,6 +251,8 @@ jobs:
           board: ${{ matrix.board }}
           suite: ${{ matrix.suite }}
           flavor: ${{ matrix.flavor }}
+          release_id: ${{ github.event.inputs.release_id }}
+          release_tag: ${{ github.event.inputs.release_tag }}
           artifact_retention_days: ${{ env.EFFECTIVE_IMAGE_ARTIFACT_RETENTION_DAYS }}
 
       - name: Calculate expire date
