@@ -254,6 +254,8 @@ jobs:
           release_id: ${{ github.event.inputs.release_id }}
           release_tag: ${{ github.event.inputs.release_tag }}
           artifact_retention_days: ${{ env.EFFECTIVE_IMAGE_ARTIFACT_RETENTION_DAYS }}
+          oss_key_id: ${{ secrets.OSS_KEY_ID }}
+          oss_key_secret: ${{ secrets.OSS_KEY_SECRET }}
 
       - name: Calculate expire date
         if: ${{ success() && steps.image_build_step.outcome == 'success' }}
