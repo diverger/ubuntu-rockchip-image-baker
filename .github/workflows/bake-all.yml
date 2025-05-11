@@ -53,6 +53,8 @@ env:
   EFFECTIVE_TRIGGER_SOURCE: ${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.trigger_source) || (github.event_name == 'repository_dispatch' && github.event.client_payload.trigger_source) || 'manual' }}
   EFFECTIVE_BAKER_ARTIFACT_RETENTION_DAYS: ${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.baker_artifact_retention_days) || (github.event_name == 'repository_dispatch' && github.event.client_payload.baker_artifact_retention_days) || 1 }}
   EFFECTIVE_IMAGE_ARTIFACT_RETENTION_DAYS: ${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.image_artifact_retention_days) || (github.event_name == 'repository_dispatch' && github.event.client_payload.image_artifact_retention_days) || 90 }}
+  EFFECTIVE_RELEASE_ID: ${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.release_id) || (github.event_name == 'repository_dispatch' && github.event.client_payload.release_id) || '' }}
+  EFFECTIVE_RELEASE_TAG: ${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.release_tag) || (github.event_name == 'repository_dispatch' && github.event.client_payload.release_tag) || '' }}
 
 jobs:
   rootfs:
@@ -251,8 +253,8 @@ jobs:
           board: ${{ matrix.board }}
           suite: ${{ matrix.suite }}
           flavor: ${{ matrix.flavor }}
-          release_id: ${{ github.event.inputs.release_id }}
-          release_tag: ${{ github.event.inputs.release_tag }}
+          release_id: ${{ env.EFFECTIVE_RELEASE_ID }}
+          release_tag: ${{ env.EFFECTIVE_RELEASE_TAG }}
           artifact_retention_days: ${{ env.EFFECTIVE_IMAGE_ARTIFACT_RETENTION_DAYS }}
           oss_key_id: ${{ secrets.OSS_KEY_ID }}
           oss_key_secret: ${{ secrets.OSS_KEY_SECRET }}
