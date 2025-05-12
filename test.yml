@@ -1,0 +1,22 @@
+name: Test OSS
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Upload to oss
+        id: upload_to_oss
+        uses: tvrcgo/oss-action@master
+        with:
+          key-id: ${{ inputs.oss_key_id }}
+          key-secret: ${{ inputs.oss_key_secret }}
+          region: oss-cn-beijing
+          bucket: diverger-github-linux-rockchip
+          assets: |
+            ./.github/**:/test/
