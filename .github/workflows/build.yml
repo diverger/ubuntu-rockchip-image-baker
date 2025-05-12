@@ -32,7 +32,7 @@ on:
         default: desktop
         options:
           - desktop
-          - server
+          # - server
           # Add other supported flavors as needed
 
       trigger_source:
