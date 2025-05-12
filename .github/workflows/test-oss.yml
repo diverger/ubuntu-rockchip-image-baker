@@ -23,4 +23,6 @@ jobs:
             ./.github/**:/test/
             # This will upload all files in the .github directory to the /test1/a directory in the OSS bucket, all files will be combined to a unopenable file, wrong use
             ./.github/**:/test1/a
+            # Upload and rename the file to test2/test.yml in the OSS bucket
             ./.github/workflows/test-oss.yml:/test2/test.yml
+            ./.github/workflows/test-oss.yml:/test2/test.oss.f.xyz.yml
