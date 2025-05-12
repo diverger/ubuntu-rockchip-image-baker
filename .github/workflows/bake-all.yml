@@ -70,7 +70,10 @@ env:
 jobs:
   rootfs:
     if: ${{ github.repository_owner == 'diverger' && github.actor == 'diverger' }}
-    runs-on: ${{ env.EFFECTIVE_RUNNER_LABEL }}
+    runs-on:
+      - ${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.runner_label)
+        || (github.event_name == 'repository_dispatch' && github.event.client_payload.runner_label)
+        || 'ubuntu-latest' }}
     name: Build rootfs
     strategy:
       fail-fast: false
@@ -119,7 +122,10 @@ jobs:
 
   kernel:
     if: ${{ github.repository_owner == 'diverger' && github.actor == 'diverger' }}
-    runs-on: ${{ env.EFFECTIVE_RUNNER_LABEL }}
+    runs-on:
+      - ${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.runner_label)
+        || (github.event_name == 'repository_dispatch' && github.event.client_payload.runner_label)
+        || 'ubuntu-latest' }}
     name: Build kernel
     strategy:
       fail-fast: false
@@ -164,7 +170,10 @@ jobs:
 
   uboot:
     if: ${{ github.repository_owner == 'diverger' && github.actor == 'diverger' }}
-    runs-on: ${{ env.EFFECTIVE_RUNNER_LABEL }}
+    runs-on:
+      - ${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.runner_label)
+        || (github.event_name == 'repository_dispatch' && github.event.client_payload.runner_label)
+        || 'ubuntu-latest' }}
     name: Build u-boot
     strategy:
       fail-fast: false
@@ -210,7 +219,10 @@ jobs:
 
   image:
     if: ${{ github.repository_owner == 'diverger' && github.actor == 'diverger' && always() }}
-    runs-on: ${{ env.EFFECTIVE_RUNNER_LABEL }}
+    runs-on:
+      - ${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.runner_label)
+        || (github.event_name == 'repository_dispatch' && github.event.client_payload.runner_label)
+        || 'ubuntu-latest' }}
     needs: [rootfs, kernel, uboot]
     name: Build Ubuntu Rockchip Image
     strategy:
