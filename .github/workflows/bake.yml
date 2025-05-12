@@ -113,7 +113,7 @@ jobs:
 
   kernel:
     if: ${{ github.repository_owner == 'diverger' && github.actor == 'diverger' }}
-    runs-on: ubuntu-latest
+    runs-on: ${{ github.event.inputs.runner_label }}
     name: Build kernel
 
     steps:
@@ -151,7 +151,7 @@ jobs:
 
   uboot:
     if: ${{ github.repository_owner == 'diverger' && github.actor == 'diverger' }}
-    runs-on: ubuntu-latest
+    runs-on: ${{ github.event.inputs.runner_label }}
     name: Build u-boot
 
     steps:
@@ -189,7 +189,7 @@ jobs:
 
   image:
     if: ${{ github.repository_owner == 'diverger' && github.actor == 'diverger' }}
-    runs-on: ubuntu-latest
+    runs-on: ${{ github.event.inputs.runner_label }}
     needs: [rootfs, kernel, uboot]
     name: Build Ubuntu Rockchip Image
 
