@@ -39,6 +39,16 @@ on:
           - server
           # Add other supported flavors as needed
 
+      runner_label:
+        description: 'Specify the runner label (e.g., ubuntu-latest, windows-latest, self-hosted-runner).'
+        required: false
+        type: choice
+        default: 'ubuntu-latest'
+        options:
+          - ubuntu-latest
+          - ubuntu-24.04
+          - ubuntu-22.04
+
       trigger_source:
         description: "Source of the trigger (e.g., manual, workflow)"
         required: false
@@ -64,7 +74,7 @@ env:
 jobs:
   rootfs:
     if: ${{ github.repository_owner == 'diverger' && github.actor == 'diverger' }}
-    runs-on: ubuntu-latest
+    runs-on: ${{ github.event.inputs.runner_label }}
     name: Build rootfs
 
     steps:
