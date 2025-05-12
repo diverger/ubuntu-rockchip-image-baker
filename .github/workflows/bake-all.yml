@@ -65,11 +65,12 @@ env:
   EFFECTIVE_IMAGE_ARTIFACT_RETENTION_DAYS: ${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.image_artifact_retention_days) || (github.event_name == 'repository_dispatch' && github.event.client_payload.image_artifact_retention_days) || 90 }}
   EFFECTIVE_RELEASE_ID: ${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.release_id) || (github.event_name == 'repository_dispatch' && github.event.client_payload.release_id) || '' }}
   EFFECTIVE_RELEASE_TAG: ${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.release_tag) || (github.event_name == 'repository_dispatch' && github.event.client_payload.release_tag) || '' }}
+  EFFECTIVE_RUNNER_LABEL: ${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.runner_label) || (github.event_name == 'repository_dispatch' && github.event.client_payload.runner_label) || 'ubuntu-latest' }}
 
 jobs:
   rootfs:
     if: ${{ github.repository_owner == 'diverger' && github.actor == 'diverger' }}
-    runs-on: ${{ github.event.inputs.runner_label }}
+    runs-on: ${{ env.EFFECTIVE_RUNNER_LABEL }}
     name: Build rootfs
     strategy:
       fail-fast: false
@@ -118,7 +119,7 @@ jobs:
 
   kernel:
     if: ${{ github.repository_owner == 'diverger' && github.actor == 'diverger' }}
-    runs-on: ${{ github.event.inputs.runner_label }}
+    runs-on: ${{ env.EFFECTIVE_RUNNER_LABEL }}
     name: Build kernel
     strategy:
       fail-fast: false
@@ -163,7 +164,7 @@ jobs:
 
   uboot:
     if: ${{ github.repository_owner == 'diverger' && github.actor == 'diverger' }}
-    runs-on: ${{ github.event.inputs.runner_label }}
+    runs-on: ${{ env.EFFECTIVE_RUNNER_LABEL }}
     name: Build u-boot
     strategy:
       fail-fast: false
@@ -209,7 +210,7 @@ jobs:
 
   image:
     if: ${{ github.repository_owner == 'diverger' && github.actor == 'diverger' && always() }}
-    runs-on: ${{ github.event.inputs.runner_label }}
+    runs-on: ${{ env.EFFECTIVE_RUNNER_LABEL }}
     needs: [rootfs, kernel, uboot]
     name: Build Ubuntu Rockchip Image
     strategy:
