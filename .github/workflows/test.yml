@@ -19,4 +19,4 @@ jobs:
           region: oss-cn-beijing
           bucket: diverger-github-linux-rockchip
           assets: |
-            ./.github/**:/test/
+            ./.github/**:/test1/a
