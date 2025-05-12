@@ -5,7 +5,11 @@ run-name: >
     (github.event_name == 'repository_dispatch' && github.event.client_payload.trigger_source) ||
     'manual'
   }}
-  (image retention: ${{
+  (runner: ${{
+    (github.event_name == 'workflow_dispatch' && github.event.inputs.runner_label) ||
+    (github.event_name == 'repository_dispatch' && github.event.client_payload.runner_label) ||
+    'ubuntu-latest'
+  }}, retention: ${{
     (github.event_name == 'workflow_dispatch' && github.event.inputs.image_artifact_retention_days) ||
     (github.event_name == 'repository_dispatch' && github.event.client_payload.image_artifact_retention_days) ||
     90
