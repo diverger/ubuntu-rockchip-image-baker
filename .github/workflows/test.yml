@@ -14,8 +14,8 @@ jobs:
         id: upload_to_oss
         uses: tvrcgo/oss-action@master
         with:
-          key-id: secrets.OSS_KEY_ID
-          key-secret: secrets.OSS_KEY_SECRET
+          key-id: ${{ secrets.OSS_KEY_ID }}
+          key-secret: ${{ secrets.OSS_KEY_SECRET }}
           region: oss-cn-beijing
           bucket: diverger-github-linux-rockchip
           assets: |
