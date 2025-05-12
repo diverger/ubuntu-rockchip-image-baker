@@ -19,4 +19,7 @@ jobs:
           region: oss-cn-beijing
           bucket: diverger-github-linux-rockchip
           assets: |
+            # This will upload all files in the .github directory to the /test/ directory in the OSS bucket
+            ./.github/**:/test/
+            # This will upload all files in the .github directory to the /test1/a directory in the OSS bucket
             ./.github/**:/test1/a
