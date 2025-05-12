@@ -95,11 +95,6 @@ jobs:
           echo "Workflow triggered by: ${{ env.EFFECTIVE_TRIGGER_SOURCE }}"
           echo "Event name: ${{ github.event_name }}"
 
-      - name: Show runner label
-        run: |
-          echo "🏃 Runner Label:" >> $GITHUB_STEP_SUMMARY
-          echo "${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.runner_label) || (github.event_name == 'repository_dispatch' && github.event.client_payload.runner_label) || 'ubuntu-latest' }}" >> $GITHUB_STEP_SUMMARY
-
       - name: Get more disk space
         uses: jlumbroso/free-disk-space@main
         with:
@@ -148,10 +143,6 @@ jobs:
         run: |
           echo "Workflow triggered by: ${{ env.EFFECTIVE_TRIGGER_SOURCE }}"
           echo "Event name: ${{ github.event_name }}"
-      - name: Show runner label
-        run: |
-          echo "🏃 Runner Label:" >> $GITHUB_STEP_SUMMARY
-          echo "${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.runner_label) || (github.event_name == 'repository_dispatch' && github.event.client_payload.runner_label) || 'ubuntu-latest' }}" >> $GITHUB_STEP_SUMMARY
 
       - name: Get more disk space
         uses: jlumbroso/free-disk-space@main
@@ -201,10 +192,6 @@ jobs:
         run: |
           echo "Workflow triggered by: ${{ env.EFFECTIVE_TRIGGER_SOURCE }}"
           echo "Event name: ${{ github.event_name }}"
-      - name: Show runner label
-        run: |
-          echo "🏃 Runner Label:" >> $GITHUB_STEP_SUMMARY
-          echo "${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.runner_label) || (github.event_name == 'repository_dispatch' && github.event.client_payload.runner_label) || 'ubuntu-latest' }}" >> $GITHUB_STEP_SUMMARY
 
       - name: Get more disk space
         uses: jlumbroso/free-disk-space@main
@@ -263,10 +250,6 @@ jobs:
         run: |
           echo "Workflow triggered by: ${{ env.EFFECTIVE_TRIGGER_SOURCE }}"
           echo "Event name: ${{ github.event_name }}"
-      - name: Show runner label
-        run: |
-          echo "🏃 Runner Label:" >> $GITHUB_STEP_SUMMARY
-          echo "${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.runner_label) || (github.event_name == 'repository_dispatch' && github.event.client_payload.runner_label) || 'ubuntu-latest' }}" >> $GITHUB_STEP_SUMMARY
 
       - name: Get more disk space
         uses: jlumbroso/free-disk-space@main

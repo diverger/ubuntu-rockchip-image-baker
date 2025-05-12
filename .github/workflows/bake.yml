@@ -236,4 +236,4 @@ jobs:
           expire_date=$(date -u -d "+${{ github.event.inputs.image_artifact_retention_days }} days" +"%Y-%m-%d")
           echo "Expire date: $expire_date"
           echo "expire_date=$expire_date" >> $GITHUB_OUTPUT
-          echo "### OS Image Artifact Expire Date: $expire_date" >> $GITHUB_STEP_SUMMARY
+          echo "📅 OS Image Artifact Expire Date: $expire_date" >> $GITHUB_STEP_SUMMARY
