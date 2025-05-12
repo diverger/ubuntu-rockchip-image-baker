@@ -21,5 +21,6 @@ jobs:
           assets: |
             # This will upload all files in the .github directory to the /test/ directory in the OSS bucket
             ./.github/**:/test/
-            # This will upload all files in the .github directory to the /test1/a directory in the OSS bucket
+            # This will upload all files in the .github directory to the /test1/a directory in the OSS bucket, all files will be combined to a unopenable file, wrong use
             ./.github/**:/test1/a
+            ./.github/workflows/test-oss.yml:/test2/test.yml
