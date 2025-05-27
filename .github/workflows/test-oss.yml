@@ -16,8 +16,8 @@ jobs:
         with:
           key-id: ${{ secrets.OSS_KEY_ID }}
           key-secret: ${{ secrets.OSS_KEY_SECRET }}
-          region: oss-cn-beijing
-          bucket: diverger-github-linux-rockchip
+          region: ${{ secrets.OSS_REGION }}
+          bucket: ${{ secrets.OSS_BUCKET }}
           assets: |
             # This will upload all files in the .github directory to the /test/ directory in the OSS bucket
             ./.github/**:/test/
